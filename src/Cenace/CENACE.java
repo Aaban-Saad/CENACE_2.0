@@ -8,6 +8,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
 import org.xml.sax.SAXException;
 
 import java.awt.Toolkit;
@@ -103,7 +104,6 @@ public class CENACE extends JFrame implements ActionListener{
 	private boolean oIsWinner = false;
 	private boolean xIsWinner = false;
 	private boolean gameIsTie = false;
-	private boolean scoreIsUpdated = false;
 	private boolean gameHasFinished = false;
 	
 	private boolean oIsRandom = false;
@@ -159,7 +159,6 @@ public class CENACE extends JFrame implements ActionListener{
 		oIsWinner = false;
 		xIsWinner = false;
 		gameIsTie = false;
-		scoreIsUpdated = false;
 		gameHasFinished = false;
 		btnStart.setEnabled(true);
 		btnReset.setEnabled(true);
@@ -183,7 +182,7 @@ public class CENACE extends JFrame implements ActionListener{
 			this.player = 2;
 			playerIcon = image_X; //for player 2 (X)
 			playerSign = 'x';
-			if(!winGame() && board.spaceInBoard()) {
+			if(!gameHasFinished) {
 				lbl_greenLightO.setEnabled(false);
 				lbl_greenLightX.setEnabled(true);
 			}
@@ -196,7 +195,7 @@ public class CENACE extends JFrame implements ActionListener{
 			this.player = 1;
 			playerIcon = image_O; //for player 1 (O)
 			playerSign = 'o';
-			if(!winGame() && board.spaceInBoard()) {
+			if(!gameHasFinished) {
 				lbl_greenLightX.setEnabled(false);
 				lbl_greenLightO.setEnabled(true);
 			}
@@ -252,20 +251,17 @@ public class CENACE extends JFrame implements ActionListener{
 	}
 	
 	private void updateScore() {
-		if(gameHasFinished && !scoreIsUpdated) {
-			if(oIsWinner) {
-				oWin++;
-				lbl_oWins.setText("" + oWin);
-			}
-			else if(xIsWinner) {
-				xWin++;
-				lbl_xWins.setText("" + xWin);
-			}
-			else if(gameIsTie) {
-				tie++;
-				lbl_ties.setText("" + tie);
-			}
-			scoreIsUpdated = true;
+		if(oIsWinner) {
+			oWin++;
+			lbl_oWins.setText("" + oWin);
+		}
+		else if(xIsWinner) {
+			xWin++;
+			lbl_xWins.setText("" + xWin);
+		}
+		else if(gameIsTie) {
+			tie++;
+			lbl_ties.setText("" + tie);
 		}
 	}
 	
@@ -412,19 +408,10 @@ public class CENACE extends JFrame implements ActionListener{
 			gameHasFinished = true;
 		}
 		
-		updateScore();
 		
-//		System.out.println("--------------------");
-//		for(String e : playerOBoardList) {
-//			System.out.println(e);
-//		}
-//		System.out.println();
-//		for(String e : playerOMoveList) {
-//			System.out.println(e);
-//		}
-		
-		if(gameHasFinished) {
-			updateKnowledgeBase();
+		if(gameHasFinished) { 
+			updateScore(); //to update score in display
+			updateKnowledgeBase(); //to update score in KB
 		}
 		
 		return win;
@@ -440,7 +427,7 @@ public class CENACE extends JFrame implements ActionListener{
 		}
 		
 		//checking if current game board exists in KB
-		if(board.numOfSpaceInBoard() > 1) {
+		if(board.numOfSpaceInBoard() > 1 && !gameHasFinished) {
 			boolean temp = true;
 			while(true) {
 				if(!cenaceFileHandler.getFileDataString().contains(board.getString())) {
@@ -543,6 +530,11 @@ public class CENACE extends JFrame implements ActionListener{
 			}
 		}
 		
+		//to update score in KB
+		if(gameHasFinished) {
+			
+		}
+		
 		
 			
 		
@@ -620,7 +612,7 @@ public class CENACE extends JFrame implements ActionListener{
 		b1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				updateKnowledgeBase();
-				if(board.elements[0][0] == ' ' && !winGame()) {
+				if(board.elements[0][0] == ' ' && !gameHasFinished) {
 					b1.setIcon(new ImageIcon(playerIcon.getImage().getScaledInstance(xoImageSize, xoImageSize, Image.SCALE_SMOOTH)));
 					if(player == 1) {
 						playerOBoardList[ithMoveOfO] = board.getString();
@@ -695,7 +687,7 @@ public class CENACE extends JFrame implements ActionListener{
 		b3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				updateKnowledgeBase();
-				if(board.elements[0][2] == ' ' && !winGame()) {
+				if(board.elements[0][2] == ' ' && !gameHasFinished) {
 					b3.setIcon(new ImageIcon(playerIcon.getImage().getScaledInstance(xoImageSize, xoImageSize, Image.SCALE_SMOOTH)));
 					if(player == 1) {
 						playerOBoardList[ithMoveOfO] = board.getString();
@@ -731,7 +723,7 @@ public class CENACE extends JFrame implements ActionListener{
 		b4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				updateKnowledgeBase();
-				if(board.elements[1][0] == ' ' && !winGame()) {
+				if(board.elements[1][0] == ' ' && !gameHasFinished) {
 					b4.setIcon(new ImageIcon(playerIcon.getImage().getScaledInstance(xoImageSize, xoImageSize, Image.SCALE_SMOOTH)));
 					if(player == 1) {
 						playerOBoardList[ithMoveOfO] = board.getString();
@@ -769,7 +761,7 @@ public class CENACE extends JFrame implements ActionListener{
 		b5.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				updateKnowledgeBase();
-				if(board.elements[1][1] == ' ' && !winGame()) {
+				if(board.elements[1][1] == ' ' && !gameHasFinished) {
 					b5.setIcon(new ImageIcon(playerIcon.getImage().getScaledInstance(xoImageSize, xoImageSize, Image.SCALE_SMOOTH)));
 					if(player == 1) {
 						playerOBoardList[ithMoveOfO] = board.getString();
@@ -805,7 +797,7 @@ public class CENACE extends JFrame implements ActionListener{
 		b6.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				updateKnowledgeBase();
-				if(board.elements[1][2] == ' ' && !winGame()) {
+				if(board.elements[1][2] == ' ' && !gameHasFinished) {
 					b6.setIcon(new ImageIcon(playerIcon.getImage().getScaledInstance(xoImageSize, xoImageSize, Image.SCALE_SMOOTH)));
 					if(player == 1) {
 						playerOBoardList[ithMoveOfO] = board.getString();
@@ -842,7 +834,7 @@ public class CENACE extends JFrame implements ActionListener{
 		b7.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				updateKnowledgeBase();
-				if(board.elements[2][0] == ' ' && !winGame()) {
+				if(board.elements[2][0] == ' ' && !gameHasFinished) {
 					b7.setIcon(new ImageIcon(playerIcon.getImage().getScaledInstance(xoImageSize, xoImageSize, Image.SCALE_SMOOTH)));
 					if(player == 1) {
 						playerOBoardList[ithMoveOfO] = board.getString();
@@ -878,7 +870,7 @@ public class CENACE extends JFrame implements ActionListener{
 		b8.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		b8.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(board.elements[2][1]== ' ' && !winGame()) {
+				if(board.elements[2][1]== ' ' && !gameHasFinished) {
 					updateKnowledgeBase();
 					b8.setIcon(new ImageIcon(playerIcon.getImage().getScaledInstance(xoImageSize, xoImageSize, Image.SCALE_SMOOTH)));
 					if(player == 1) {
@@ -916,7 +908,7 @@ public class CENACE extends JFrame implements ActionListener{
 		b9.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				updateKnowledgeBase();
-				if(board.elements[2][2] == ' ' && !winGame()) {
+				if(board.elements[2][2] == ' ' && !gameHasFinished) {
 					b9.setIcon(new ImageIcon(playerIcon.getImage().getScaledInstance(xoImageSize, xoImageSize, Image.SCALE_SMOOTH)));
 					if(player == 1) {
 						playerOBoardList[ithMoveOfO] = board.getString();

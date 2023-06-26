@@ -115,16 +115,25 @@ public class CenaceFileHandler {
     
     void updateScore(String board, int boardIndex, int toBeAdded) {
     	String fileDataString = this.getFileDataString();
+    	String backupString = fileDataString;
     	String begTag = "<" + board + ">";
     	String endTag = "</" + board + ">";
     	String indexBegTag = "<" + boardIndex + ">";
     	String indexEndTag = "</" + boardIndex + ">";
     	String[] boardsSplit1 = fileDataString.split(begTag);
-    	String[] boardsSplit2 = boardsSplit1[1].split(endTag);
-    	String[] movesSplit1 = boardsSplit2[0].split(indexBegTag);
-    	String[] movesSplit2 = movesSplit1[1].split(indexEndTag);
-    	int score = Integer.parseInt(movesSplit2[0]) + toBeAdded;
-    	fileDataString = boardsSplit1[0] + begTag + movesSplit1[0] + indexBegTag + score + indexEndTag + movesSplit2[1] + endTag + boardsSplit2[1];
+    	if(boardsSplit1.length == 2) {
+    		String[] boardsSplit2 = boardsSplit1[1].split(endTag);
+        	String[] movesSplit1 = boardsSplit2[0].split(indexBegTag);
+        	String[] movesSplit2 = movesSplit1[1].split(indexEndTag);
+        	int score = Integer.parseInt(movesSplit2[0]) + toBeAdded;
+        	if(movesSplit2.length == 2) {
+        		fileDataString = boardsSplit1[0] + begTag + movesSplit1[0] + indexBegTag + score + indexEndTag + movesSplit2[1] + endTag + boardsSplit2[1];
+        	} else {
+        		fileDataString = boardsSplit1[0] + begTag + movesSplit1[0] + indexBegTag + score + indexEndTag + endTag + boardsSplit2[1];
+    		}
+    	} else {
+			fileDataString = backupString;
+		}
     	
     	String toBeWritten = "";
     	int i;

@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.util.TimerTask;
+import java.util.spi.CalendarNameProvider;
 import java.awt.event.ActionEvent;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -114,9 +115,23 @@ public class CENACE extends JFrame implements ActionListener{
 	private boolean xIsHuman = true;
 	
 	private String[] playerOBoardList = new String[5];
-	private String[] playerOMoveList = new String[5];
+	private String[] playerOBoardInKB = new String[5];
+	private int[] playerOMoveList = new int[5];
+	private int[] playerORotations = new int[5];
+	private boolean[] playerOMirrors = new boolean[5];
+	
 	private String[] playerXBoardList = new String[5];
-	private String[] playerXMoveList = new String[5];
+	private String[] playerXBoardInKB = new String[5];
+	private int[] playerXMoveList = new int[5];
+	private int[] playerXRotations = new int[5];
+	private boolean[] playerXMirrors = new boolean[5];
+	
+	
+	//change these values for a different result
+	private int defaultPoint = 3;
+	private int winReward = 3; //reward 
+	private int drawReward = 1;
+	private int punishment = -1;
 	
 	
 	/**
@@ -124,10 +139,17 @@ public class CENACE extends JFrame implements ActionListener{
 	 */
 	private void reset() {
 		for(int i = 0; i < 5; i++) {
-			playerOBoardList[i] = "null";
-			playerOMoveList[i] = "null";
-			playerXBoardList[i] = "null";
-			playerXMoveList[i] = "null";
+			playerOBoardList[i] = null;
+			playerOBoardInKB[i] = null;
+			playerOMoveList[i] = 0;
+			playerORotations[i] = 0;
+			playerOMirrors[i] = false;
+			
+			playerXBoardList[i] = null;
+			playerOBoardInKB[i] = null;
+			playerXMoveList[i] = 0;
+			playerXRotations[i] = 0;
+			playerXMirrors[i] = false;
 		}
 		
 		board.reset();
@@ -427,134 +449,213 @@ public class CENACE extends JFrame implements ActionListener{
 		}
 		
 		//checking if current game board exists in KB
-		if(board.numOfSpaceInBoard() > 1 && !gameHasFinished) {
+		if(!gameHasFinished && board.numOfSpaceInBoard() > 1) {
 			boolean temp = true;
 			while(true) {
 				if(!cenaceFileHandler.getFileDataString().contains(board.getString())) {
 					temp = false;
+					board.deleteTransformation();
 				} else {
 					temp = true;
-//					board.print();
-//					System.out.println();
+					
+					if(playerSign == 'o') {
+						playerOBoardInKB[ithMoveOfO] = board.getString();
+						playerORotations[ithMoveOfO] = 0;
+						playerOMirrors[ithMoveOfO] = false;
+					} else {
+						playerXBoardInKB[ithMoveOfX] = board.getString();
+						playerXRotations[ithMoveOfX] = 0;
+						playerXMirrors[ithMoveOfX] = false;
+					}
 					board.deleteTransformation();
-//					board.print();
-//					System.out.println("________________");
 					break;
 				}
 				if(!cenaceFileHandler.getFileDataString().contains(board.mirror().getString())) {
 					temp = false;
+					board.deleteTransformation();
 				} else {
 					temp = true;
-//					board.print();
-//					System.out.println();
+					
+					if(playerSign == 'o') {
+						playerOBoardInKB[ithMoveOfO] = board.getString();
+						playerORotations[ithMoveOfO] = 0;
+						playerOMirrors[ithMoveOfO] = true;
+					} else {
+						playerXBoardInKB[ithMoveOfX] = board.getString();
+						playerXRotations[ithMoveOfX] = 0;
+						playerXMirrors[ithMoveOfX] = true;
+					}
 					board.deleteTransformation();
-//					board.print();
-//					System.out.println("________________");
 					break;
 				}
 				if(!cenaceFileHandler.getFileDataString().contains(board.rotateCW().getString())) {
 					temp = false;
+					board.deleteTransformation();
 				} else {
 					temp = true;
-//					board.print();
-//					System.out.println();
+					
+					if(playerSign == 'o') {
+						playerOBoardInKB[ithMoveOfO] = board.getString();
+						playerORotations[ithMoveOfO] = 1;
+						playerOMirrors[ithMoveOfO] = true;
+					} else {
+						playerXBoardInKB[ithMoveOfX] = board.getString();
+						playerXRotations[ithMoveOfX] = 1;
+						playerXMirrors[ithMoveOfX] = true;
+					}
 					board.deleteTransformation();
-//					board.print();
-//					System.out.println("________________");
 					break;
 				}
 				if(!cenaceFileHandler.getFileDataString().contains(board.rotateCW().rotateCW().getString())) {
 					temp = false;
+					board.deleteTransformation();
 				} else {
 					temp = true;
-//					board.print();
-//					System.out.println();
+					
+					if(playerSign == 'o') {
+						playerOBoardInKB[ithMoveOfO] = board.getString();
+						playerORotations[ithMoveOfO] = 2;
+						playerOMirrors[ithMoveOfO] = true;
+					} else {
+						playerXBoardInKB[ithMoveOfX] = board.getString();
+						playerXRotations[ithMoveOfX] = 2;
+						playerXMirrors[ithMoveOfX] = true;
+					}
 					board.deleteTransformation();
-//					board.print();
-//					System.out.println("________________");
 					break;
 				}
 				if(!cenaceFileHandler.getFileDataString().contains(board.rotateCW().rotateCW().rotateCW().getString())) {
 					temp = false;
+					board.deleteTransformation();
 				} else {
 					temp = true;
-//					board.print();
-//					System.out.println();
+					
+					if(playerSign == 'o') {
+						playerOBoardInKB[ithMoveOfO] = board.getString();
+						playerORotations[ithMoveOfO] = 3;
+						playerOMirrors[ithMoveOfO] = true;
+					} else {
+						playerXBoardInKB[ithMoveOfX] = board.getString();
+						playerXRotations[ithMoveOfX] = 3;
+						playerXMirrors[ithMoveOfX] = true;
+					}
 					board.deleteTransformation();
-//					board.print();
-//					System.out.println("________________");
 					break;
 				}
 				
 				board.deleteTransformation();
 				if(!cenaceFileHandler.getFileDataString().contains(board.rotateCW().getString())) {
 					temp = false;
+					board.deleteTransformation();
 				} else {
 					temp = true;
-//					board.print();
-//					System.out.println();
+					
+					if(playerSign == 'o') {
+						playerOBoardInKB[ithMoveOfO] = board.getString();
+						playerORotations[ithMoveOfO] = 1;
+						playerOMirrors[ithMoveOfO] = false;
+					} else {
+						playerXBoardInKB[ithMoveOfX] = board.getString();
+						playerXRotations[ithMoveOfX] = 1;
+						playerXMirrors[ithMoveOfX] = false;
+					}
 					board.deleteTransformation();
-//					board.print();
-//					System.out.println("________________");
 					break;
 				}
 				if(!cenaceFileHandler.getFileDataString().contains(board.rotateCW().rotateCW().getString())) {
 					temp = false;
+					board.deleteTransformation();
 				} else {
 					temp = true;
-//					board.print();
-//					System.out.println();
+					
+					if(playerSign == 'o') {
+						playerOBoardInKB[ithMoveOfO] = board.getString();
+						playerORotations[ithMoveOfO] = 2;
+						playerOMirrors[ithMoveOfO] = false;
+					} else {
+						playerXBoardInKB[ithMoveOfX] = board.getString();
+						playerXRotations[ithMoveOfX] = 2;
+						playerXMirrors[ithMoveOfX] = false;
+					}
 					board.deleteTransformation();
-//					board.print();
-//					System.out.println("________________");
 					break;
 				}
 				if(!cenaceFileHandler.getFileDataString().contains(board.rotateCW().rotateCW().rotateCW().getString())) {
 					temp = false;
+					board.deleteTransformation();
 				} else {
 					temp = true;
-//					board.print();
-//					System.out.println();
+					
+					if(playerSign == 'o') {
+						playerOBoardInKB[ithMoveOfO] = board.getString();
+						playerORotations[ithMoveOfO] = 3;
+						playerOMirrors[ithMoveOfO] = false;
+					} else {
+						playerXBoardInKB[ithMoveOfX] = board.getString();
+						playerXRotations[ithMoveOfX] = 3;
+						playerXMirrors[ithMoveOfX] = false;
+					}
 					board.deleteTransformation();
-//					board.print();
-//					System.out.println("________________");
 					break;
 				}
-				
-				board.deleteTransformation();
 				break;
 			}
 			//current game board doesn.t exist in KB, adding data
 			if(!temp) {
-				cenaceFileHandler.addNewData(playerSign, board.getString(), 3);
+				cenaceFileHandler.addNewData(playerSign, board.getString(), defaultPoint);
+				if(playerSign == 'o') {
+					playerOBoardInKB[ithMoveOfO] = board.getString();
+					playerORotations[ithMoveOfO] = 0;
+					playerOMirrors[ithMoveOfO] = false;
+				} else {
+					playerXBoardInKB[ithMoveOfX] = board.getString();
+					playerXRotations[ithMoveOfX] = 0;
+					playerXMirrors[ithMoveOfX] = false;
+				}
 			}
 		}
 		
 		//to update score in KB
 		if(gameHasFinished) {
+			int i, j, move;
 			
+			for(i = 0; (i < 5 && playerOMoveList[i] != 0); i++) {
+				move = playerOMoveList[i];
+				if(playerOMirrors[i]) {
+					move = board.getTransformedIndex(playerOMoveList[i], true, 0);
+				}
+				for(j = 0; j < playerORotations[i]; j++) {
+					move = board.getTransformedIndex(move, false, 1);
+				}
+				
+				if(oIsWinner && playerOBoardInKB[i] != null) {
+					cenaceFileHandler.updateScore(playerOBoardInKB[i], move, winReward);
+				} else if(xIsWinner && playerOBoardInKB[i] != "null") {
+					cenaceFileHandler.updateScore(playerOBoardInKB[i], move, punishment);
+				} else if(gameIsTie && playerOBoardInKB[i] != "null"){
+					cenaceFileHandler.updateScore(playerOBoardInKB[i], move, drawReward);
+				}
+			}
+			
+			for(i = 0; (i < 5 && playerXMoveList[i] != 0); i++) {
+				move = playerXMoveList[i];
+				if(playerXMirrors[i]) {
+					move = board.getTransformedIndex(playerXMoveList[i], true, 0);
+				}
+				for(j = 0; j < playerXRotations[i]; j++) {
+					move = board.getTransformedIndex(move, false, 1);
+				}
+				
+				if(xIsWinner && playerXBoardInKB[i] != null) {
+					cenaceFileHandler.updateScore(playerXBoardInKB[i], move, winReward);
+				} else if(oIsWinner  && playerXBoardInKB[i] != "null") {
+					cenaceFileHandler.updateScore(playerXBoardInKB[i], move, punishment);
+				} else if(gameIsTie  && playerXBoardInKB[i] != "null"){
+					cenaceFileHandler.updateScore(playerXBoardInKB[i], move, drawReward);
+				}
+			}
 		}
 		
-		
-			
-		
-		
-		
-		
-		
-//		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-//		try {
-//			DocumentBuilder builder = factory.newDocumentBuilder();
-//			try {
-//				Document cenaceTrainingData = builder.parse(new File("Training_Data.cenace"));
-//			} catch (SAXException e) {
-//				e.printStackTrace();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//		} catch (ParserConfigurationException e) {
-//			e.printStackTrace();
-//		}
 		
 	}
 	
@@ -611,17 +712,17 @@ public class CENACE extends JFrame implements ActionListener{
 		b1.setBorderPainted(false);
 		b1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				updateKnowledgeBase();
 				if(board.elements[0][0] == ' ' && !gameHasFinished) {
+					updateKnowledgeBase();
 					b1.setIcon(new ImageIcon(playerIcon.getImage().getScaledInstance(xoImageSize, xoImageSize, Image.SCALE_SMOOTH)));
 					if(player == 1) {
 						playerOBoardList[ithMoveOfO] = board.getString();
-						playerOMoveList[ithMoveOfO] = "1";
+						playerOMoveList[ithMoveOfO] = 1;
 						ithMoveOfO++;
 					}
 					else {
 						playerXBoardList[ithMoveOfX] = board.getString();
-						playerXMoveList[ithMoveOfX] = "1";
+						playerXMoveList[ithMoveOfX] = 1;
 						ithMoveOfX++;
 					}
 					board.elements[0][0] = playerSign;
@@ -649,17 +750,17 @@ public class CENACE extends JFrame implements ActionListener{
 		b2.setBorderPainted(false);
 		b2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				updateKnowledgeBase();
 				if(board.elements[0][1] == ' ' && !winGame()) {
+					updateKnowledgeBase();
 					b2.setIcon(new ImageIcon(playerIcon.getImage().getScaledInstance(xoImageSize, xoImageSize, Image.SCALE_SMOOTH)));
 					if(player == 1) {
 						playerOBoardList[ithMoveOfO] = board.getString();
-						playerOMoveList[ithMoveOfO] = "2";
+						playerOMoveList[ithMoveOfO] = 2;
 						ithMoveOfO++;
 					}
 					else {
 						playerXBoardList[ithMoveOfX] = board.getString();
-						playerXMoveList[ithMoveOfX] = "2";
+						playerXMoveList[ithMoveOfX] = 2;
 						ithMoveOfX++;
 					}
 					board.elements[0][1] = playerSign;
@@ -686,17 +787,17 @@ public class CENACE extends JFrame implements ActionListener{
 		b3.setBorderPainted(false);
 		b3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				updateKnowledgeBase();
 				if(board.elements[0][2] == ' ' && !gameHasFinished) {
+					updateKnowledgeBase();
 					b3.setIcon(new ImageIcon(playerIcon.getImage().getScaledInstance(xoImageSize, xoImageSize, Image.SCALE_SMOOTH)));
 					if(player == 1) {
 						playerOBoardList[ithMoveOfO] = board.getString();
-						playerOMoveList[ithMoveOfO] = "3";
+						playerOMoveList[ithMoveOfO] = 3;
 						ithMoveOfO++;
 					}
 					else {
 						playerXBoardList[ithMoveOfX] = board.getString();
-						playerXMoveList[ithMoveOfX] = "3";
+						playerXMoveList[ithMoveOfX] = 3;
 						ithMoveOfX++;
 					}
 					board.elements[0][2] = playerSign;
@@ -722,17 +823,17 @@ public class CENACE extends JFrame implements ActionListener{
 		b4.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		b4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				updateKnowledgeBase();
 				if(board.elements[1][0] == ' ' && !gameHasFinished) {
+					updateKnowledgeBase();
 					b4.setIcon(new ImageIcon(playerIcon.getImage().getScaledInstance(xoImageSize, xoImageSize, Image.SCALE_SMOOTH)));
 					if(player == 1) {
 						playerOBoardList[ithMoveOfO] = board.getString();
-						playerOMoveList[ithMoveOfO] = "4";
+						playerOMoveList[ithMoveOfO] = 4;
 						ithMoveOfO++;
 					}
 					else {
 						playerXBoardList[ithMoveOfX] = board.getString();
-						playerXMoveList[ithMoveOfX] = "4";
+						playerXMoveList[ithMoveOfX] = 4;
 						ithMoveOfX++;
 					}
 					board.elements[1][0] = playerSign;
@@ -760,17 +861,17 @@ public class CENACE extends JFrame implements ActionListener{
 		b5.setBorderPainted(false);
 		b5.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				updateKnowledgeBase();
 				if(board.elements[1][1] == ' ' && !gameHasFinished) {
+					updateKnowledgeBase();
 					b5.setIcon(new ImageIcon(playerIcon.getImage().getScaledInstance(xoImageSize, xoImageSize, Image.SCALE_SMOOTH)));
 					if(player == 1) {
 						playerOBoardList[ithMoveOfO] = board.getString();
-						playerOMoveList[ithMoveOfO] = "5";
+						playerOMoveList[ithMoveOfO] = 5;
 						ithMoveOfO++;
 					}
 					else {
 						playerXBoardList[ithMoveOfX] = board.getString();
-						playerXMoveList[ithMoveOfX] = "5";
+						playerXMoveList[ithMoveOfX] = 5;
 						ithMoveOfX++;
 					}
 					board.elements[1][1] = playerSign;
@@ -796,17 +897,17 @@ public class CENACE extends JFrame implements ActionListener{
 		b6.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		b6.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				updateKnowledgeBase();
 				if(board.elements[1][2] == ' ' && !gameHasFinished) {
+					updateKnowledgeBase();
 					b6.setIcon(new ImageIcon(playerIcon.getImage().getScaledInstance(xoImageSize, xoImageSize, Image.SCALE_SMOOTH)));
 					if(player == 1) {
 						playerOBoardList[ithMoveOfO] = board.getString();
-						playerOMoveList[ithMoveOfO] = "6";
+						playerOMoveList[ithMoveOfO] = 6;
 						ithMoveOfO++;
 					}
 					else {
 						playerXBoardList[ithMoveOfX] = board.getString();
-						playerXMoveList[ithMoveOfX] = "6";
+						playerXMoveList[ithMoveOfX] = 6;
 						ithMoveOfX++;
 					}
 					board.elements[1][2] = playerSign;
@@ -833,17 +934,17 @@ public class CENACE extends JFrame implements ActionListener{
 		b7.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		b7.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				updateKnowledgeBase();
 				if(board.elements[2][0] == ' ' && !gameHasFinished) {
+					updateKnowledgeBase();
 					b7.setIcon(new ImageIcon(playerIcon.getImage().getScaledInstance(xoImageSize, xoImageSize, Image.SCALE_SMOOTH)));
 					if(player == 1) {
 						playerOBoardList[ithMoveOfO] = board.getString();
-						playerOMoveList[ithMoveOfO] = "7";
+						playerOMoveList[ithMoveOfO] = 7;
 						ithMoveOfO++;
 					}
 					else {
 						playerXBoardList[ithMoveOfX] = board.getString();
-						playerXMoveList[ithMoveOfX] = "7";
+						playerXMoveList[ithMoveOfX] = 7;
 						ithMoveOfX++;
 					}
 					board.elements[2][0] = playerSign;
@@ -871,16 +972,16 @@ public class CENACE extends JFrame implements ActionListener{
 		b8.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(board.elements[2][1]== ' ' && !gameHasFinished) {
-					updateKnowledgeBase();
 					b8.setIcon(new ImageIcon(playerIcon.getImage().getScaledInstance(xoImageSize, xoImageSize, Image.SCALE_SMOOTH)));
+					updateKnowledgeBase();
 					if(player == 1) {
 						playerOBoardList[ithMoveOfO] = board.getString();
-						playerOMoveList[ithMoveOfO] = "8";
+						playerOMoveList[ithMoveOfO] = 8;
 						ithMoveOfO++;
 					}
 					else {
 						playerXBoardList[ithMoveOfX] = board.getString();
-						playerXMoveList[ithMoveOfX] = "8";
+						playerXMoveList[ithMoveOfX] = 8;
 						ithMoveOfX++;
 					}
 					board.elements[2][1] = playerSign;
@@ -907,17 +1008,17 @@ public class CENACE extends JFrame implements ActionListener{
 		b9.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		b9.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				updateKnowledgeBase();
 				if(board.elements[2][2] == ' ' && !gameHasFinished) {
+					updateKnowledgeBase();
 					b9.setIcon(new ImageIcon(playerIcon.getImage().getScaledInstance(xoImageSize, xoImageSize, Image.SCALE_SMOOTH)));
 					if(player == 1) {
 						playerOBoardList[ithMoveOfO] = board.getString();
-						playerOMoveList[ithMoveOfO] = "9";
+						playerOMoveList[ithMoveOfO] = 9;
 						ithMoveOfO++;
 					}
 					else {
 						playerXBoardList[ithMoveOfX] = board.getString();
-						playerXMoveList[ithMoveOfX] = "9";
+						playerXMoveList[ithMoveOfX] = 9;
 						ithMoveOfX++;
 					}
 					board.elements[2][2] = playerSign;

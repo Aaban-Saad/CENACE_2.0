@@ -9,6 +9,10 @@ import java.util.Scanner;
 public class CenaceFileHandler {
     private String filePath;
     private File cenaceFile;
+    
+    //change these values for a different result
+    private int minScore = 1;
+    private int maxScore = 500;
 
     CenaceFileHandler(String filePath) {
         cenaceFile = new File(filePath);
@@ -126,6 +130,8 @@ public class CenaceFileHandler {
         	String[] movesSplit1 = boardsSplit2[0].split(indexBegTag);
         	String[] movesSplit2 = movesSplit1[1].split(indexEndTag);
         	int score = Integer.parseInt(movesSplit2[0]) + toBeAdded;
+        	if(score < minScore) score = minScore;
+        	else if(score > maxScore) score = maxScore;
         	if(movesSplit2.length == 2) {
         		fileDataString = boardsSplit1[0] + begTag + movesSplit1[0] + indexBegTag + score + indexEndTag + movesSplit2[1] + endTag + boardsSplit2[1];
         	} else {

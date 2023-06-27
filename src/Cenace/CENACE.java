@@ -488,7 +488,7 @@ public class CENACE extends JFrame implements ActionListener{
 					board.deleteTransformation();
 					break;
 				}
-				if(!cenaceFileHandler.getFileDataString().contains(board.rotateCW().getString())) {
+				if(!cenaceFileHandler.getFileDataString().contains(board.mirror().rotateCW().getString())) {
 					temp = false;
 					board.deleteTransformation();
 				} else {
@@ -506,7 +506,7 @@ public class CENACE extends JFrame implements ActionListener{
 					board.deleteTransformation();
 					break;
 				}
-				if(!cenaceFileHandler.getFileDataString().contains(board.rotateCW().rotateCW().getString())) {
+				if(!cenaceFileHandler.getFileDataString().contains(board.mirror().rotateCW().rotateCW().getString())) {
 					temp = false;
 					board.deleteTransformation();
 				} else {
@@ -524,7 +524,7 @@ public class CENACE extends JFrame implements ActionListener{
 					board.deleteTransformation();
 					break;
 				}
-				if(!cenaceFileHandler.getFileDataString().contains(board.rotateCW().rotateCW().rotateCW().getString())) {
+				if(!cenaceFileHandler.getFileDataString().contains(board.mirror().rotateCW().rotateCW().rotateCW().getString())) {
 					temp = false;
 					board.deleteTransformation();
 				} else {
@@ -617,46 +617,33 @@ public class CENACE extends JFrame implements ActionListener{
 		
 		//to update score in KB
 		if(gameHasFinished) {
-			int i, j, move;
+
+			int i, move;
 			
 			for(i = 0; (i < 5 && playerOMoveList[i] != 0); i++) {
-				move = playerOMoveList[i];
-				if(playerOMirrors[i]) {
-					move = board.getTransformedIndex(playerOMoveList[i], true, 0);
-				}
-				for(j = 0; j < playerORotations[i]; j++) {
-					move = board.getTransformedIndex(move, false, 1);
-				}
-				
+				move = board.getTransformedIndex(playerOMoveList[i], playerOMirrors[i], playerORotations[i]);
+
 				if(oIsWinner && playerOBoardInKB[i] != null) {
 					cenaceFileHandler.updateScore(playerOBoardInKB[i], move, winReward);
-				} else if(xIsWinner && playerOBoardInKB[i] != "null") {
+				} else if(xIsWinner && playerOBoardInKB[i] != null) {
 					cenaceFileHandler.updateScore(playerOBoardInKB[i], move, punishment);
-				} else if(gameIsTie && playerOBoardInKB[i] != "null"){
+				} else if(gameIsTie && playerOBoardInKB[i] != null){
 					cenaceFileHandler.updateScore(playerOBoardInKB[i], move, drawReward);
 				}
 			}
 			
 			for(i = 0; (i < 5 && playerXMoveList[i] != 0); i++) {
-				move = playerXMoveList[i];
-				if(playerXMirrors[i]) {
-					move = board.getTransformedIndex(playerXMoveList[i], true, 0);
-				}
-				for(j = 0; j < playerXRotations[i]; j++) {
-					move = board.getTransformedIndex(move, false, 1);
-				}
-				
+				move = board.getTransformedIndex(playerXMoveList[i], playerXMirrors[i], playerXRotations[i]);
+
 				if(xIsWinner && playerXBoardInKB[i] != null) {
 					cenaceFileHandler.updateScore(playerXBoardInKB[i], move, winReward);
-				} else if(oIsWinner  && playerXBoardInKB[i] != "null") {
+				} else if(oIsWinner  && playerXBoardInKB[i] != null) {
 					cenaceFileHandler.updateScore(playerXBoardInKB[i], move, punishment);
-				} else if(gameIsTie  && playerXBoardInKB[i] != "null"){
+				} else if(gameIsTie  && playerXBoardInKB[i] != null){
 					cenaceFileHandler.updateScore(playerXBoardInKB[i], move, drawReward);
 				}
 			}
 		}
-		
-		
 	}
 	
 	

@@ -125,7 +125,7 @@ public class CenaceFileHandler {
     	String indexBegTag = "<" + boardIndex + ">";
     	String indexEndTag = "</" + boardIndex + ">";
     	String[] boardsSplit1 = fileDataString.split(begTag);
-    	if(boardsSplit1.length == 2) {
+//    	if(boardsSplit1.length == 2) {
     		String[] boardsSplit2 = boardsSplit1[1].split(endTag);
         	String[] movesSplit1 = boardsSplit2[0].split(indexBegTag);
         	String[] movesSplit2 = movesSplit1[1].split(indexEndTag);
@@ -137,9 +137,9 @@ public class CenaceFileHandler {
         	} else {
         		fileDataString = boardsSplit1[0] + begTag + movesSplit1[0] + indexBegTag + score + indexEndTag + endTag + boardsSplit2[1];
     		}
-    	} else {
-			fileDataString = backupString;
-		}
+//    	} else {
+//			fileDataString = backupString;
+//		}
     	
     	String toBeWritten = "";
     	int i;
@@ -160,5 +160,51 @@ public class CenaceFileHandler {
             e.printStackTrace();
         }
     }
-    
+
+    int[] getMovePriorityArray(String board) {
+    	int i, j;
+    	//counting the number of available spaces in board;
+    	int numOfSpace = 0;
+    	for(i = 0; i < board.length(); i++) {
+    		if(board.charAt(i) == '-') {
+    			numOfSpace++;
+    		}
+    	}
+    	System.out.println(board);
+    	System.out.println("num of spaces = " + numOfSpace);
+    	
+    	//storing the index(+1) of these blank spaces into an array
+    	int[] indexOfSpace = new int[numOfSpace];
+    	for(i = 0, j = 0; i < board.length(); i++) {
+    		if(board.charAt(i) == '-') {
+    			indexOfSpace[j] = i + 1;
+    			j++;
+    			System.out.println((i + 1));
+    		}
+    	}
+    	
+    	//getting the points of blank spaces
+    	int[] pointOfIndex = new int[numOfSpace];
+    	for(i = 0; i < numOfSpace; i++) {
+    		String fileDataString = this.getFileDataString();
+        	String backupString = fileDataString;
+        	String begTag = "<" + board + ">";
+        	String endTag = "</" + board + ">";
+        	String indexBegTag = "<" + indexOfSpace[i] + ">";
+        	String indexEndTag = "</" + indexOfSpace[i] + ">";
+        	String[] boardsSplit1 = fileDataString.split(begTag);
+    		String[] boardsSplit2 = boardsSplit1[1].split(endTag);
+        	String[] movesSplit1 = boardsSplit2[0].split(indexBegTag);
+        	String[] movesSplit2 = movesSplit1[1].split(indexEndTag);
+        	
+        	pointOfIndex[i] = Integer.parseInt(movesSplit2[0]);
+    	}
+    	for(int e: pointOfIndex) {
+    		System.out.print(e + " ");
+    	}
+	
+    	
+    	int[] a = {1, 2};
+    	return a;
+    }
 }

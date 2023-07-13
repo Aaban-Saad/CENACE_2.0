@@ -126,6 +126,8 @@ public class CENACE extends JFrame implements ActionListener{
 	private int[] playerXRotations = new int[5];
 	private boolean[] playerXMirrors = new boolean[5];
 	
+	private CenaceFileHandler cenaceFileHandler = new CenaceFileHandler("Knowledge_base/Training_Data_1.cenace");
+	
 	
 	//change these values for a different result
 	private int defaultPoint = 3;
@@ -269,7 +271,138 @@ public class CENACE extends JFrame implements ActionListener{
 			else if(movePosition == 9 && !gameHasFinished) {
 				b9.doClick();
 			}	
-		}	
+		}
+		else if((oIsCENACE && player == 1) || (xIsCENACE && player == 2)) {
+			if(!cenaceFileHandler.fileExists()) {
+				cenaceFileHandler.createNewCenaceFile();
+			}
+			
+			boolean temp = false; //true means CENACE can take input from KB
+								  //false means it cannot
+			while(true) {
+				if(cenaceFileHandler.getFileDataString().contains(board.getString())) {
+					cenaceFileHandler.getMovePriorityArray(board.getString()); //this line is only for debugging..delete it
+					temp = true;
+					board.deleteTransformation();
+					break;
+				} else {
+					
+					board.deleteTransformation();
+				}
+				if(cenaceFileHandler.getFileDataString().contains(board.mirror().getString())) {
+					cenaceFileHandler.getMovePriorityArray(board.getString()); //this line is only for debugging..delete it
+					temp = true;
+					board.deleteTransformation();
+					break;
+				} else {
+					
+					
+					board.deleteTransformation();
+				}
+				if(cenaceFileHandler.getFileDataString().contains(board.mirror().rotateCW().getString())) {
+					cenaceFileHandler.getMovePriorityArray(board.getString()); //this line is only for debugging..delete it
+					temp = true;
+					board.deleteTransformation();
+					break;
+				} else {
+					
+					board.deleteTransformation();
+				}
+				if(cenaceFileHandler.getFileDataString().contains(board.mirror().rotateCW().rotateCW().getString())) {
+					cenaceFileHandler.getMovePriorityArray(board.getString()); //this line is only for debugging..delete it
+					temp = true;
+					board.deleteTransformation();
+					break;
+				} else {
+					
+					board.deleteTransformation();
+				}
+				if(cenaceFileHandler.getFileDataString().contains(board.mirror().rotateCW().rotateCW().rotateCW().getString())) {
+					cenaceFileHandler.getMovePriorityArray(board.getString()); //this line is only for debugging..delete it
+					temp = true;
+					board.deleteTransformation();
+					break;
+				} else {
+					
+					
+					board.deleteTransformation();
+				}
+				
+				board.deleteTransformation();
+				if(cenaceFileHandler.getFileDataString().contains(board.rotateCW().getString())) {
+					cenaceFileHandler.getMovePriorityArray(board.getString()); //this line is only for debugging..delete it
+					temp = true;
+					board.deleteTransformation();
+					break;
+				} else {
+					
+					board.deleteTransformation();
+				}
+				if(cenaceFileHandler.getFileDataString().contains(board.rotateCW().rotateCW().getString())) {
+					cenaceFileHandler.getMovePriorityArray(board.getString()); //this line is only for debugging..delete it
+					temp = true;
+					board.deleteTransformation();
+					break;
+				} else {
+				
+					board.deleteTransformation();
+				}
+				if(cenaceFileHandler.getFileDataString().contains(board.rotateCW().rotateCW().rotateCW().getString())) {
+					cenaceFileHandler.getMovePriorityArray(board.getString()); //this line is only for debugging..delete it
+					temp = true;
+					board.deleteTransformation();
+					break;
+				} else {
+					
+					board.deleteTransformation();
+				}
+				break;
+			}
+			if(temp) {
+				System.out.println("can take input from kb");
+				System.out.println();
+			} else {
+				System.out.println("cannot take input from kb");
+				System.out.println();
+			}
+			do {
+				movePosition = (int)(Math.random() * 9 + 1);
+				r = (movePosition - 1) / 3;
+				c = (movePosition - 1) - 3 * r;
+
+			} while(board.elements[r][c] != ' ');
+	
+			
+			if(movePosition == 1 && !gameHasFinished) {
+				b1.doClick();
+			}
+			else if(movePosition == 2 && !gameHasFinished) {
+				b2.doClick();
+			}
+			else if(movePosition == 3 && !gameHasFinished) {
+				b3.doClick();
+			}
+			else if(movePosition == 4 && !gameHasFinished) {
+				b4.doClick();
+			}
+			else if(movePosition == 5 && !gameHasFinished) {
+				b5.doClick();
+			}
+			else if(movePosition == 6 && !gameHasFinished) {
+				b6.doClick();
+			}
+			else if(movePosition == 7 && !gameHasFinished) {
+				b7.doClick();
+			}
+			else if(movePosition == 8 && !gameHasFinished) {
+				b8.doClick();
+			}
+			else if(movePosition == 9 && !gameHasFinished) {
+				b9.doClick();
+			}
+			
+			
+		}
 	}
 	
 	private void updateScore() {
@@ -442,7 +575,6 @@ public class CENACE extends JFrame implements ActionListener{
 	private void updateKnowledgeBase() {
 		File knowledgeBase = new File("Knowledge_Base");
 		knowledgeBase.mkdir();
-		CenaceFileHandler cenaceFileHandler = new CenaceFileHandler("Knowledge_base/Training_Data_1.cenace");
 		
 		if(!cenaceFileHandler.fileExists()) {
 			cenaceFileHandler.createNewCenaceFile();

@@ -129,13 +129,13 @@ public class CenaceFileHandler {
     		String[] boardsSplit2 = boardsSplit1[1].split(endTag);
         	String[] movesSplit1 = boardsSplit2[0].split(indexBegTag);
         	String[] movesSplit2 = movesSplit1[1].split(indexEndTag);
-        	int score = Integer.parseInt(movesSplit2[0]) + toBeAdded;
-        	if(score < minScore) score = minScore;
-        	else if(score > maxScore) score = maxScore;
+        	int pointOfIndex  = Integer.parseInt(movesSplit2[0]) + toBeAdded;
+        	if(pointOfIndex  < minScore) pointOfIndex = minScore;
+        	else if(pointOfIndex  > maxScore) pointOfIndex = maxScore;
         	if(movesSplit2.length == 2) {
-        		fileDataString = boardsSplit1[0] + begTag + movesSplit1[0] + indexBegTag + score + indexEndTag + movesSplit2[1] + endTag + boardsSplit2[1];
+        		fileDataString = boardsSplit1[0] + begTag + movesSplit1[0] + indexBegTag + pointOfIndex  + indexEndTag + movesSplit2[1] + endTag + boardsSplit2[1];
         	} else {
-        		fileDataString = boardsSplit1[0] + begTag + movesSplit1[0] + indexBegTag + score + indexEndTag + endTag + boardsSplit2[1];
+        		fileDataString = boardsSplit1[0] + begTag + movesSplit1[0] + indexBegTag + pointOfIndex  + indexEndTag + endTag + boardsSplit2[1];
     		}
 //    	} else {
 //			fileDataString = backupString;
@@ -184,7 +184,7 @@ public class CenaceFileHandler {
     	}
     	
     	//getting the points of blank spaces
-    	int[] pointOfIndex = new int[numOfSpace];
+    	int[] pointOfIndexArray = new int[numOfSpace];
     	for(i = 0; i < numOfSpace; i++) {
     		String fileDataString = this.getFileDataString();
         	String backupString = fileDataString;
@@ -197,31 +197,29 @@ public class CenaceFileHandler {
         	String[] movesSplit1 = boardsSplit2[0].split(indexBegTag);
         	String[] movesSplit2 = movesSplit1[1].split(indexEndTag);
         	
-        	pointOfIndex[i] = Integer.parseInt(movesSplit2[0]);
+        	pointOfIndexArray[i] = Integer.parseInt(movesSplit2[0]);
     	}
-    	for(int e: pointOfIndex) {
+    	for(int e: pointOfIndexArray) {
     		System.out.print(e + " ");
     	}
     	
     	//creating the move priority array
     	int arrSize = 0;
-    	for(i = 0; i < pointOfIndex.length; i++) {
-    		arrSize += pointOfIndex[i];
+    	for(i = 0; i < pointOfIndexArray.length; i++) {
+    		arrSize += pointOfIndexArray[i];
     	}
     	
     	int[] movePriorityArray = new int[arrSize];
-    	for (i = 0, j = 0; i < pointOfIndex.length; i++)
+    	for (i = 0, j = 0; i < pointOfIndexArray.length; i++)
     	{
-    	    for (k = 0; k < pointOfIndex[i]; k++ )
+    	    for (k = 0; k < pointOfIndexArray[i]; k++ )
     	    {
     	        movePriorityArray[j++] = indexOfSpace[i];
     	    }
     	}
     	
     	System.out.println();
-    	for(int e: movePriorityArray) {
-    		System.out.print(e + " ");
-    	}
+    	
     	return movePriorityArray;
     }
 }

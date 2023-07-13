@@ -272,106 +272,128 @@ public class CENACE extends JFrame implements ActionListener{
 				b9.doClick();
 			}	
 		}
+		
 		else if((oIsCENACE && player == 1) || (xIsCENACE && player == 2)) {
 			if(!cenaceFileHandler.fileExists()) {
 				cenaceFileHandler.createNewCenaceFile();
 			}
 			
+			int numOfCwRotations = 0;
+			boolean mirrored = false;
+			int[] movePriorityArray = new int[0];
 			boolean temp = false; //true means CENACE can take input from KB
 								  //false means it cannot
 			while(true) {
 				if(cenaceFileHandler.getFileDataString().contains(board.getString())) {
-					cenaceFileHandler.getMovePriorityArray(board.getString()); //this line is only for debugging..delete it
+					numOfCwRotations = 0;
+					mirrored = false;
+					movePriorityArray = cenaceFileHandler.getMovePriorityArray(board.getString()); //this line is only for debugging..delete it
 					temp = true;
 					board.deleteTransformation();
 					break;
 				} else {
-					
 					board.deleteTransformation();
 				}
 				if(cenaceFileHandler.getFileDataString().contains(board.mirror().getString())) {
-					cenaceFileHandler.getMovePriorityArray(board.getString()); //this line is only for debugging..delete it
+					numOfCwRotations = 0;
+					mirrored = true;
+					movePriorityArray = cenaceFileHandler.getMovePriorityArray(board.getString()); //this line is only for debugging..delete it
 					temp = true;
 					board.deleteTransformation();
 					break;
 				} else {
-					
-					
 					board.deleteTransformation();
 				}
 				if(cenaceFileHandler.getFileDataString().contains(board.mirror().rotateCW().getString())) {
-					cenaceFileHandler.getMovePriorityArray(board.getString()); //this line is only for debugging..delete it
+					numOfCwRotations = 4 - 1; //why 4 - 1? -->because i am going to reverse the transform.
+					mirrored = true;
+					movePriorityArray = cenaceFileHandler.getMovePriorityArray(board.getString()); //this line is only for debugging..delete it
 					temp = true;
 					board.deleteTransformation();
 					break;
 				} else {
-					
 					board.deleteTransformation();
 				}
 				if(cenaceFileHandler.getFileDataString().contains(board.mirror().rotateCW().rotateCW().getString())) {
-					cenaceFileHandler.getMovePriorityArray(board.getString()); //this line is only for debugging..delete it
+					numOfCwRotations = 4 - 2;
+					mirrored = true;
+					movePriorityArray = cenaceFileHandler.getMovePriorityArray(board.getString()); //this line is only for debugging..delete it
 					temp = true;
 					board.deleteTransformation();
 					break;
 				} else {
-					
 					board.deleteTransformation();
 				}
 				if(cenaceFileHandler.getFileDataString().contains(board.mirror().rotateCW().rotateCW().rotateCW().getString())) {
-					cenaceFileHandler.getMovePriorityArray(board.getString()); //this line is only for debugging..delete it
+					numOfCwRotations = 4 - 3;
+					mirrored = true;
+					movePriorityArray = cenaceFileHandler.getMovePriorityArray(board.getString()); //this line is only for debugging..delete it
 					temp = true;
 					board.deleteTransformation();
 					break;
 				} else {
-					
-					
 					board.deleteTransformation();
 				}
 				
 				board.deleteTransformation();
 				if(cenaceFileHandler.getFileDataString().contains(board.rotateCW().getString())) {
-					cenaceFileHandler.getMovePriorityArray(board.getString()); //this line is only for debugging..delete it
+					numOfCwRotations = 4 - 1;
+					mirrored = false;
+					movePriorityArray = cenaceFileHandler.getMovePriorityArray(board.getString()); //this line is only for debugging..delete it
 					temp = true;
 					board.deleteTransformation();
 					break;
 				} else {
-					
 					board.deleteTransformation();
 				}
 				if(cenaceFileHandler.getFileDataString().contains(board.rotateCW().rotateCW().getString())) {
-					cenaceFileHandler.getMovePriorityArray(board.getString()); //this line is only for debugging..delete it
+					numOfCwRotations = 4 - 2;
+					mirrored = false;
+					movePriorityArray = cenaceFileHandler.getMovePriorityArray(board.getString()); //this line is only for debugging..delete it
 					temp = true;
 					board.deleteTransformation();
 					break;
 				} else {
-				
 					board.deleteTransformation();
 				}
 				if(cenaceFileHandler.getFileDataString().contains(board.rotateCW().rotateCW().rotateCW().getString())) {
-					cenaceFileHandler.getMovePriorityArray(board.getString()); //this line is only for debugging..delete it
+					numOfCwRotations = 4 - 3;
+					mirrored = false;
+					movePriorityArray = cenaceFileHandler.getMovePriorityArray(board.getString()); //this line is only for debugging..delete it
 					temp = true;
 					board.deleteTransformation();
 					break;
 				} else {
-					
 					board.deleteTransformation();
 				}
 				break;
 			}
+
+			System.out.println("mpa length: " + movePriorityArray.length);
+			for(int e: movePriorityArray) {
+	    		System.out.print(e + ", ");
+	    	}
+			
+			
 			if(temp) {
 				System.out.println("can take input from kb");
 				System.out.println();
+				movePosition = movePriorityArray[(int)(Math.random() * movePriorityArray.length)];
+				System.out.println("before trns mv pos "+ movePosition);
+				movePosition = board.getUnTransformedIndex(movePosition, mirrored, numOfCwRotations);
+				r = (movePosition - 1) / 3;
+				c = (movePosition - 1) - 3 * r;
+				System.out.println("after trns mv pos "+ movePosition);
 			} else {
+				do {
+					movePosition = (int)(Math.random() * 9 + 1);
+					r = (movePosition - 1) / 3;
+					c = (movePosition - 1) - 3 * r;
+
+				} while(board.elements[r][c] != ' ');
 				System.out.println("cannot take input from kb");
 				System.out.println();
 			}
-			do {
-				movePosition = (int)(Math.random() * 9 + 1);
-				r = (movePosition - 1) / 3;
-				c = (movePosition - 1) - 3 * r;
-
-			} while(board.elements[r][c] != ' ');
-	
 			
 			if(movePosition == 1 && !gameHasFinished) {
 				b1.doClick();

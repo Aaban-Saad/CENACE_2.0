@@ -162,7 +162,7 @@ public class CenaceFileHandler {
     }
 
     int[] getMovePriorityArray(String board) {
-    	int i, j;
+    	int i, j, k;
     	//counting the number of available spaces in board;
     	int numOfSpace = 0;
     	for(i = 0; i < board.length(); i++) {
@@ -202,9 +202,26 @@ public class CenaceFileHandler {
     	for(int e: pointOfIndex) {
     		System.out.print(e + " ");
     	}
-	
     	
-    	int[] a = {1, 2};
-    	return a;
+    	//creating the move priority array
+    	int arrSize = 0;
+    	for(i = 0; i < pointOfIndex.length; i++) {
+    		arrSize += pointOfIndex[i];
+    	}
+    	
+    	int[] movePriorityArray = new int[arrSize];
+    	for (i = 0, j = 0; i < pointOfIndex.length; i++)
+    	{
+    	    for (k = 0; k < pointOfIndex[i]; k++ )
+    	    {
+    	        movePriorityArray[j++] = indexOfSpace[i];
+    	    }
+    	}
+    	
+    	System.out.println();
+    	for(int e: movePriorityArray) {
+    		System.out.print(e + " ");
+    	}
+    	return movePriorityArray;
     }
 }
